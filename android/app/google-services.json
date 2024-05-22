@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "874853387330",
+    "project_id": "mytube-arijit12",
+    "storage_bucket": "mytube-arijit12.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874853387330:android:3a6e9e492eeefdb4e371db",
+        "android_client_info": {
+          "package_name": "com.example.untitled"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfdUqo9wMb_E_yoZ6qmZul4TexQnpOIkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874853387330:android:02b6a2df87186a9ce371db",
+        "android_client_info": {
+          "package_name": "com.mytubeapp.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfdUqo9wMb_E_yoZ6qmZul4TexQnpOIkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
