@@ -13,7 +13,6 @@ final userDataServiceProvider = Provider(
 class UserDataService {
   FirebaseAuth auth;
   FirebaseFirestore firestore;
-
   UserDataService({
     required this.auth,
     required this.firestore,
@@ -25,9 +24,7 @@ class UserDataService {
     required String email,
     required String description,
     required String profilePic,
-  })
-
-  async {
+  }) async {
     UserModel user = UserModel(
       displayName: displayName,
       username: username,

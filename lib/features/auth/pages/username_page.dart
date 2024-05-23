@@ -8,12 +8,13 @@ final formKey = GlobalKey<FormState>();
 
 class UsernamePage extends ConsumerStatefulWidget {
   final String displayName;
-  final String profilepic;
+  final String profilePic;
   final String email;
-  const UsernamePage(
-      {required this.displayName,
-      required this.profilepic,
-      required this.email});
+  const UsernamePage({
+    required this.displayName,
+    required this.profilePic,
+    required this.email,
+  });
 
   @override
   ConsumerState<UsernamePage> createState() => _UsernamePageState();
@@ -22,17 +23,19 @@ class UsernamePage extends ConsumerStatefulWidget {
 class _UsernamePageState extends ConsumerState<UsernamePage> {
   final TextEditingController usernameController = TextEditingController();
   bool isValidate = true;
+
   void validateUsername() async {
-    final usersMap = await FirebaseFirestore.instance.collection("user").get();
+    final usersMap = await FirebaseFirestore.instance.collection("users").get();
     final users = usersMap.docs.map((user) => user).toList();
-    String? targatedUsername;
+    String? targetedUsername;
+
     for (var user in users) {
       if (usernameController.text == user.data()["username"]) {
-        targatedUsername = user.data()["username"];
+        targetedUsername = user.data()["username"];
         isValidate = false;
         setState(() {});
       }
-      if (usernameController.text != targatedUsername) {
+      if (usernameController.text != targetedUsername) {
         isValidate = true;
         setState(() {});
       }
@@ -48,16 +51,18 @@ class _UsernamePageState extends ConsumerState<UsernamePage> {
           children: [
             const Padding(
               padding: EdgeInsets.symmetric(
-                vertical: 27,
+                vertical: 26,
                 horizontal: 14,
               ),
               child: Text(
                 "Enter the username",
-                style: TextStyle(color: Colors.blueGrey),
+                style: TextStyle(
+                  color: Colors.blueGrey,
+                ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+              padding: const EdgeInsets.only(left: 15, right: 15),
               child: Form(
                 child: TextFormField(
                   onChanged: (username) {
@@ -65,14 +70,16 @@ class _UsernamePageState extends ConsumerState<UsernamePage> {
                   },
                   autovalidateMode: AutovalidateMode.always,
                   validator: (username) {
-                    return isValidate ? null : "This username is already taken";
+                    return isValidate ? null : "username already taken";
                   },
                   key: formKey,
                   controller: usernameController,
                   decoration: InputDecoration(
                     suffixIcon: isValidate
                         ? const Icon(Icons.verified_user_rounded)
-                        : const Icon(Icons.cancel),
+                        : const Icon(
+                            Icons.cancel,
+                          ),
                     suffixIconColor: isValidate ? Colors.green : Colors.red,
                     hintText: "Insert username",
                     border: const OutlineInputBorder(
@@ -96,20 +103,21 @@ class _UsernamePageState extends ConsumerState<UsernamePage> {
             ),
             const Spacer(),
             Padding(
-              padding: const EdgeInsets.only(bottom: 30.0, left: 7, right: 7),
+              padding: const EdgeInsets.only(bottom: 30, left: 8, right: 8),
               child: FlatButton(
-                text: "Continue",
+                text: "CONTINUE",
                 onPressed: () async {
-                  // adding user data in database
+                  // add users data inside datebase
                   isValidate
                       ? await ref
                           .read(userDataServiceProvider)
                           .addUserDataToFirestore(
-                              displayName: widget.displayName,
-                              username: usernameController.text,
-                              email: widget.email,
-                              description: "",
-                              profilePic: widget.profilepic)
+                            displayName: widget.displayName,
+                            username: usernameController.text,
+                            email: widget.email,
+                            description: "",
+                            profilePic: widget.profilePic,
+                          )
                       : null;
                 },
                 colour: isValidate ? Colors.green : Colors.green.shade100,

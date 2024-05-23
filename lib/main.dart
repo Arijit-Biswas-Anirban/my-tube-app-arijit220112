@@ -45,7 +45,7 @@ class MyApp extends ConsumerWidget {
                 if (!snapshot.hasData || !snapshot.data!.exists) {
                   return UsernamePage(
                       displayName: user!.displayName!,
-                      profilepic: user.photoURL!,
+                      profilePic: user.photoURL!,
                       email: user.email!);
                 }
                 else if(snapshot.connectionState == ConnectionState.waiting){
