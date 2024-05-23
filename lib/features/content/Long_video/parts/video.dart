@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:untitled/cores/colors.dart';
-import 'package:untitled/cores/widgets/flat_button.dart';
-import 'package:untitled/features/content/Long_video/widgets/video_externel_buttons.dart';
+import 'package:mytube/cores/colors.dart';
+import 'package:mytube/cores/widgets/flat_button.dart';
+import 'package:mytube/features/content/Long_video/widgets/video_externel_buttons.dart';
 
 class Video extends StatelessWidget {
   const Video({Key? key}) : super(key: key);

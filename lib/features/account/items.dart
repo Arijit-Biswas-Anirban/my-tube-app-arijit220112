@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:untitled/cores/widgets/image_item.dart';
+import 'package:mytube/cores/widgets/image_item.dart';
 
 class Items extends StatelessWidget {
   const Items({super.key});

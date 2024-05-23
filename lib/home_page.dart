@@ -1,7 +1,7 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 
 import 'package:flutter/material.dart';
-import 'package:untitled/cores/widgets/image_button.dart';
+import 'package:mytube/cores/widgets/image_button.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -9,14 +9,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffFFFFFF),
+      backgroundColor: const Color(0xffffffff),
       body: SafeArea(
         child: Column(
           children: [
             Row(
               children: [
                 Image.asset(
-                  "assets/images/mytube.jpg",
+                  "assets/images/mytube.png",
                   height: 36,
                 ),
                 const SizedBox(width: 4),
