@@ -1,7 +1,13 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mytube/cores/screens/error_page.dart';
+import 'package:mytube/cores/screens/loader.dart';
 import 'package:mytube/cores/widgets/image_button.dart';
+import 'package:mytube/features/auth/provider/user_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -50,6 +56,23 @@ class HomePage extends StatelessWidget {
                       haveColor: false,
                     ),
                   ),
+                ),
+                Consumer(
+                  builder: (context, ref, child) {
+                    return ref.watch(currentUserProvider).when(
+                        data: (currentUser) => Padding(
+                              padding: const EdgeInsets.only(right: 12.0),
+                              child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: Colors.grey,
+                                backgroundImage: CachedNetworkImageProvider(
+                                  currentUser.profilePic,
+                                ),
+                              ),
+                            ),
+                        error: (error, stackTrace) => const ErrorPage(),
+                        loading: () => const Loader());
+                  },
                 ),
               ],
             ),
