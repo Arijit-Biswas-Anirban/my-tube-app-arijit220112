@@ -7,10 +7,20 @@ import 'package:mytube/cores/screens/loader.dart';
 import 'package:mytube/cores/widgets/image_button.dart';
 import 'package:mytube/features/auth/provider/user_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:mytube/features/upload/upload_bottom_sheet.dart';
+import 'package:mytube/pages_list.dart';
 
+import 'features/content/bottom_navigation.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +86,24 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
+            Expanded(
+              child: pages[currentIndex],
+            ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigation(
+        onPressed: (index) {
+          if (index != 2) {
+            currentIndex = index;
+            setState(() {});
+          } else {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) => const CreateBottomSheet(),
+            );
+          }
+        },
       ),
     );
   }

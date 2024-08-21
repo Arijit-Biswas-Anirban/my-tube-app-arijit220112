@@ -2,8 +2,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-class BottomNavigation extends StatelessWidget {
-  const BottomNavigation({Key? key}) : super(key: key);
+class BottomNavigation extends StatefulWidget {
+  final Function(int index) onPressed;
+
+  const BottomNavigation({
+    Key? key,
+    required this.onPressed
+  }) : super(key: key);
+
+  @override
+  State<BottomNavigation> createState() => _BottomNavigationState();
+}
+
+class _BottomNavigationState extends State<BottomNavigation> {
+
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -12,25 +25,29 @@ class BottomNavigation extends StatelessWidget {
       child: GNav(
         rippleColor: Colors.grey[100]!,
         hoverColor: Colors.grey[100]!,
-        haptic: true, // haptic feedback
+        haptic: true,
+        // haptic feedback
         tabBorderRadius: 15,
         tabActiveBorder: Border.all(
           color: Colors.black,
           width: 1,
-        ), // tab button border
+        ),
+        // tab button border
         tabBorder: Border.all(
           color: Colors.grey,
           width: 1,
-        ), // tab button border
+        ),
+        // tab button border
         tabShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.25),
             blurRadius: 13,
           )
-        ], // tab button shadow
+        ],
+        // tab button shadow
         curve: Curves.easeInToLinear,
-        duration: const Duration(milliseconds: 419),
-        gap: 8,
+        duration: const Duration(milliseconds: 412),
+        gap: MediaQuery.sizeOf(context).width * 0.01,
         color: Colors.grey[800],
         activeColor: Colors.purple,
         iconSize: 24,
@@ -48,6 +65,9 @@ class BottomNavigation extends StatelessWidget {
           GButton(icon: Icons.search, text: "Search"),
           GButton(icon: Icons.heart_broken, text: "Log out"),
         ],
+
+        onTabChange: widget.onPressed,
+        selectedIndex: currentIndex,
       ),
     );
   }
