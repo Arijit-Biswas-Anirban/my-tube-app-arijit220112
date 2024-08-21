@@ -9,6 +9,7 @@ import 'package:mytube/features/auth/pages/login_page.dart';
 import 'package:mytube/features/auth/pages/username_page.dart';
 import 'package:mytube/features/channel/my_channel/pages/channel_settings.dart';
 import 'package:mytube/features/channel/my_channel/pages/my_channel_screen.dart';
+import 'package:mytube/features/channel/user_channel/pages/user_channel_page.dart';
 import 'package:mytube/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -53,7 +54,7 @@ class MyApp extends ConsumerWidget {
                 else if(snapshot.connectionState == ConnectionState.waiting){
                   return Loader();
                 }
-                return MyChannelSettings();
+                return UserChannelPage();
               },
             );
           }),
