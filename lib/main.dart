@@ -55,7 +55,7 @@ class MyApp extends ConsumerWidget {
                 else if(snapshot.connectionState == ConnectionState.waiting){
                   return Loader();
                 }
-                return VideoDetailsPage();
+                return HomePage();
               },
             );
           }),

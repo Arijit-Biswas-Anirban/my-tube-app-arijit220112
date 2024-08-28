@@ -1,15 +1,31 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mytube/cores/methods.dart';
+import 'package:mytube/features/upload/long_video/video_repository.dart';
+import 'package:uuid/uuid.dart';
 
-class VideoDetailsPage extends StatefulWidget {
-  const VideoDetailsPage({super.key});
+class VideoDetailsPage extends ConsumerStatefulWidget {
+  final File? video;
+
+  const VideoDetailsPage({this.video});
 
   @override
-  State<VideoDetailsPage> createState() => _VideoDetailsPageState();
+  ConsumerState<VideoDetailsPage> createState() => _VideoDetailsPageState();
 }
 
-class _VideoDetailsPageState extends State<VideoDetailsPage> {
+class _VideoDetailsPageState extends ConsumerState<VideoDetailsPage> {
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  File? image;
+  bool isThumbnailSelected = false;
+  String randomNumber = const Uuid().v4();
+  String videoId = const Uuid().v4();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,8 +42,9 @@ class _VideoDetailsPageState extends State<VideoDetailsPage> {
               const SizedBox(
                 height: 5,
               ),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
                     hintText: "Enter the title",
                     prefixIcon: Icon(Icons.title),
                     border: OutlineInputBorder(
@@ -39,15 +56,16 @@ class _VideoDetailsPageState extends State<VideoDetailsPage> {
                 height: 20,
               ),
               const Text(
-                maxLines: 5,
                 "Enter the description",
                 style: TextStyle(fontSize: 15, color: Colors.grey),
               ),
               const SizedBox(
                 height: 5,
               ),
-              const TextField(
-                decoration: InputDecoration(
+              TextField(
+                controller: descriptionController,
+                maxLines: 5,
+                decoration: const InputDecoration(
                     hintText: "Enter the description",
                     prefixIcon: Icon(Icons.description),
                     border: OutlineInputBorder(
@@ -66,13 +84,62 @@ class _VideoDetailsPageState extends State<VideoDetailsPage> {
                   ),
                 ),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    //picking image for thumbnail
+                    image = await pickImage();
+                    isThumbnailSelected = true;
+                    setState(() {});
+                  },
                   child: const Text(
                     "Select Thumbnail",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
+              const SizedBox(
+                height: 8,
+              ),
+              isThumbnailSelected
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 12, bottom: 12),
+                      child: Image.file(
+                        image!,
+                        cacheHeight: 260,
+                        cacheWidth: 400,
+                      ),
+                    )
+                  : const SizedBox(),
+              isThumbnailSelected
+                  ? Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(12),
+                        ),
+                      ),
+                      child: TextButton(
+                        onPressed: () async {
+                          //publish the video
+                          String thumbnail = await putFileInStorage(
+                              image, randomNumber, "image");
+                          String videoUrl = await putFileInStorage(
+                              widget.video, randomNumber, "video");
+                          ref.watch(longVideoProvider).uploadVideoToFirestore(
+                                videoUrl: videoUrl,
+                                thumbnail: thumbnail,
+                                title: titleController.text,
+                                datePublished: DateTime.now(),
+                                videoId: videoId,
+                                userId: FirebaseAuth.instance.currentUser!.uid,
+                              );
+                        },
+                        child: const Text(
+                          "Publish",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                  : const SizedBox(),
             ],
           ),
         ),
