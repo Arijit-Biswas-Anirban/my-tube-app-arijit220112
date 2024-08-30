@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mytube/cores/widgets/image_item.dart';
+import 'package:mytube/features/channel/my_channel/pages/channel_settings.dart';
 
 class Items extends StatelessWidget {
   const Items({super.key});
@@ -13,7 +14,12 @@ class Items extends StatelessWidget {
             height: 35,
             child: ImageItem(
               imageName: "your-channel.png",
-              itemClicked: () {},
+              itemClicked: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyChannelSettings()),
+                );
+              },
               itemText: "Your Channel",
               haveColor: false,
             ),
