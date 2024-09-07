@@ -2,10 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mytube/features/upload/long_video/video_model.dart';
 
-final longVideoProvider = Provider((ref) => VideoRepository(firestore: FirebaseFirestore.instance));
+final longVideoProvider = Provider(
+  (ref) => VideoRepository(
+    firestore: FirebaseFirestore.instance,
+  ),
+);
 
 class VideoRepository {
   FirebaseFirestore firestore;
+
   VideoRepository({
     required this.firestore,
   });
@@ -19,15 +24,15 @@ class VideoRepository {
     required String userId,
   }) async {
     VideoModel video = VideoModel(
-        videoUrl: videoUrl,
-        thumbnail: thumbnail,
-        title: title,
-        datePublished: datePublished,
-        views: 0,
-        videoId: videoId,
-        userId: userId,
-        likes: [],
-        type: "video",
+      videoUrl: videoUrl,
+      thumbnail: thumbnail,
+      title: title,
+      datePublished: datePublished,
+      views: 0,
+      videoId: videoId,
+      userId: userId,
+      likes: [],
+      type: "video",
     );
     await firestore.collection("videos").doc(videoId).set(video.toMap());
   }

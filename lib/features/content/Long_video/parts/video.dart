@@ -1,16 +1,21 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mytube/cores/colors.dart';
+import 'package:mytube/cores/screens/error_page.dart';
 import 'package:mytube/cores/screens/loader.dart';
 import 'package:mytube/cores/widgets/flat_button.dart';
 import 'package:mytube/features/auth/model/user_model.dart';
 import 'package:mytube/features/auth/provider/user_provider.dart';
+import 'package:mytube/features/content/Long_video/parts/post.dart';
 import 'package:mytube/features/content/Long_video/widgets/video_externel_buttons.dart';
 import 'package:mytube/features/upload/long_video/video_model.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../comment/comment_sheet.dart';
 
 class Video extends ConsumerStatefulWidget {
   final VideoModel video;
@@ -321,6 +326,88 @@ class _VideoState extends ConsumerState<Video> {
                     ),
                   ],
                 ),
+              ),
+            ),
+            //comment section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+              child: GestureDetector(
+                onTap: (){
+                  showModalBottomSheet(context: context, builder: (context) => CommentSheet(),);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(9),
+                    ),
+                  ),
+                  height: 45,
+                  width: 200,
+
+                ),
+              ),
+            ),
+            Expanded(
+              child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("videos")
+                    .where("userId", isEqualTo: widget.video.userId)
+                    .where("videoId", isNotEqualTo: widget.video.videoId)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Loader();
+                  }
+
+                  if (snapshot.hasError) {
+                    print('Error fetching suggested videos: ${snapshot.error}');
+                    return Center(
+                      child: Text(
+                        "There was an error fetching suggested videos. Please try again later.",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+
+                  if (!snapshot.hasData ||
+                      snapshot.data == null ||
+                      snapshot.data!.docs.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "No suggested videos available at the moment.",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    );
+                  }
+
+                  try {
+                    final videosMap = snapshot.data?.docs;
+                    final videos = videosMap
+                        ?.map((video) => VideoModel.fromMap(video.data()))
+                        .toList();
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: videos?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          return Post(video: videos![index]);
+                        },
+                      ),
+                    );
+                  } catch (error) {
+                    print('Error mapping suggested videos: $error');
+                    return Center(
+                      child: Text(
+                        "Error displaying suggested videos. Please try again later.",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+                },
               ),
             ),
           ],
