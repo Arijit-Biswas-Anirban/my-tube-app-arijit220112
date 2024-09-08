@@ -1,15 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:mytube/cores/widgets/flat_button.dart';
+import 'dart:io';
 
-class ShortVideoDetailsPage extends StatefulWidget {
-  const ShortVideoDetailsPage({super.key});
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mytube/cores/widgets/flat_button.dart';
+import 'package:mytube/features/upload/short_video/repository/short_video_repository.dart';
+
+class ShortVideoDetailsPage extends ConsumerStatefulWidget {
+  final File video;
+
+  const ShortVideoDetailsPage({super.key, required this.video});
 
   @override
-  State<ShortVideoDetailsPage> createState() => _ShortVideoDetailsPageState();
+  ConsumerState<ShortVideoDetailsPage> createState() =>
+      _ShortVideoDetailsPageState();
 }
 
-class _ShortVideoDetailsPageState extends State<ShortVideoDetailsPage> {
+class _ShortVideoDetailsPageState extends ConsumerState<ShortVideoDetailsPage> {
   final captionController = TextEditingController();
+  final DateTime date = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +58,14 @@ class _ShortVideoDetailsPageState extends State<ShortVideoDetailsPage> {
                   padding: const EdgeInsets.only(bottom: 30.0),
                   child: FlatButton(
                     text: "Publish",
-                    onPressed: () {},
+                    onPressed: () async {
+                      await ref
+                          .watch(shortVideoProvider)
+                          .addShortVideoToFirestore(
+                              caption: captionController.text,
+                              video: widget.video.path,
+                              datePublished: date);
+                    },
                     colour: Colors.green,
                   ),
                 ),

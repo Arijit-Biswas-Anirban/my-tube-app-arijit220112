@@ -52,7 +52,9 @@ class _ShortVideoScreenState extends State<ShortVideoScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ShortVideoDetailsPage(),
+              builder: (context) => ShortVideoDetailsPage(
+                video: widget.shortVideo
+              ),
             ),
           );
         } else {
