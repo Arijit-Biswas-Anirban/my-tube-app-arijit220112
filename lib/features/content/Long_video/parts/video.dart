@@ -333,7 +333,9 @@ class _VideoState extends ConsumerState<Video> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
               child: GestureDetector(
                 onTap: (){
-                  showModalBottomSheet(context: context, builder: (context) => CommentSheet(),);
+                  showModalBottomSheet(context: context, builder: (context) => CommentSheet(
+                    video: widget.video,
+                  ),);
                 },
                 child: Container(
                   decoration: BoxDecoration(
