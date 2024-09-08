@@ -2,6 +2,7 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mytube/cores/colors.dart';
@@ -12,9 +13,14 @@ import 'package:mytube/features/auth/model/user_model.dart';
 import 'package:mytube/features/auth/provider/user_provider.dart';
 import 'package:mytube/features/content/Long_video/parts/post.dart';
 import 'package:mytube/features/content/Long_video/widgets/video_externel_buttons.dart';
+import 'package:mytube/features/content/Long_video/widgets/video_first_comment.dart';
+import 'package:mytube/features/content/comment/comment_provider.dart';
 import 'package:mytube/features/upload/long_video/video_model.dart';
+import 'package:mytube/features/upload/long_video/video_repository.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../channel/user_channel/subscribe_repository.dart';
+import '../../../upload/comments/comment_model.dart';
 import '../../comment/comment_sheet.dart';
 
 class Video extends ConsumerStatefulWidget {
@@ -69,6 +75,14 @@ class _VideoState extends ConsumerState<Video> {
     Duration position = _controller!.value.position;
     position = position + Duration(seconds: 1);
     _controller!.seekTo(position);
+  }
+
+  likeVideo() async {
+    await ref.watch(longVideoProvider).likeVideo(
+          currentUserId: FirebaseAuth.instance.currentUser!.uid,
+          likes: widget.video.likes,
+          videoId: widget.video.videoId,
+        );
   }
 
   @override
@@ -262,10 +276,26 @@ class _VideoState extends ConsumerState<Video> {
                     width: 100,
                     child: Padding(
                       padding: const EdgeInsets.only(right: 6),
-                      child: FlatButton(
-                        text: "Subscribe",
-                        onPressed: () {},
-                        colour: Colors.black,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white, backgroundColor: Colors.black, // Text color
+                        ),
+                        onPressed: () async {
+                          // Ensure subscriptions is a List<String>
+                          final subscriptions = List<String>.from(user.value!.subscriptions);
+
+                          await ref.read(subscribeChannelProvider).subscribeChannel(
+                            userId: user.value!.userId,
+                            currentUserId: FirebaseAuth.instance.currentUser!.uid,
+                            subscriptions: subscriptions,
+                          );
+                          ref.refresh(anyUserDataProvider(widget.video.userId));
+                        },
+                        child: Text(
+                          user.value!.subscriptions.contains(FirebaseAuth.instance.currentUser!.uid)
+                              ? "Unsubscribe"
+                              : "Subscribe",
+                        ),
                       ),
                     ),
                   ),
@@ -292,12 +322,18 @@ class _VideoState extends ConsumerState<Video> {
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: () {},
+                            onTap: likeVideo,
                             child: Icon(
                               Icons.thumb_up,
+                              color: widget.video.likes.contains(
+                                      FirebaseAuth.instance.currentUser!.uid)
+                                  ? Colors.blue
+                                  : Colors.black,
                               size: 15.5,
                             ),
                           ),
+                          const SizedBox(width: 5),
+                          Text("${widget.video.likes.length}"),
                           const SizedBox(width: 20),
                           const Icon(
                             Icons.thumb_down,
@@ -330,12 +366,16 @@ class _VideoState extends ConsumerState<Video> {
             ),
             //comment section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
               child: GestureDetector(
-                onTap: (){
-                  showModalBottomSheet(context: context, builder: (context) => CommentSheet(
-                    video: widget.video,
-                  ),);
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => CommentSheet(
+                      video: widget.video,
+                    ),
+                  );
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -344,9 +384,22 @@ class _VideoState extends ConsumerState<Video> {
                       Radius.circular(9),
                     ),
                   ),
-                  height: 45,
+                  height: 65,
                   width: 200,
-
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final AsyncValue<List<CommentModel>> comments = ref.watch(
+                        commentsProvider(widget.video.videoId),
+                      );
+                      if (comments.value!.isEmpty) {
+                        return const SizedBox(
+                          height: 20,
+                        );
+                      }
+                      return VideoFirstComment(
+                          comments: comments.value!, user: user.value!);
+                    },
+                  ),
                 ),
               ),
             ),

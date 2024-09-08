@@ -31,13 +31,13 @@ class MyChannelScreen extends ConsumerWidget {
                       const Text("More about this channel"),
 
                       // Buttons
-                      Buttons(),
+                      const Buttons(),
 
                       // Tab bar
-                      PageTabBar(),
+                      const PageTabBar(),
 
                       // Tab bar view
-                      PageTabBarView(),
+                      const PageTabBarView(),
                     ],
                   ),
                 ),

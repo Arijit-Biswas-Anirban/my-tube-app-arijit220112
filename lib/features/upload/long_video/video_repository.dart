@@ -36,4 +36,24 @@ class VideoRepository {
     );
     await firestore.collection("videos").doc(videoId).set(video.toMap());
   }
+
+  Future<void> likeVideo(
+      {required List? likes, required videoId, required currentUserId}) async {
+    if (!likes!.contains(currentUserId)) {
+      await FirebaseFirestore.instance
+          .collection("videos")
+          .doc(videoId)
+          .update({
+        'likes': FieldValue.arrayUnion([currentUserId])
+      });
+    }
+    if (likes.contains(currentUserId)) {
+      await FirebaseFirestore.instance
+          .collection("videos")
+          .doc(videoId)
+          .update({
+        'likes': FieldValue.arrayRemove([currentUserId])
+      });
+    }
+  }
 }

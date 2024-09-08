@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -27,6 +28,14 @@ class Post extends ConsumerWidget {
               video: video,
             ),
           ),
+        );
+        FirebaseFirestore.instance
+            .collection("videos")
+            .doc(video.videoId)
+            .update(
+          {
+            "views": FieldValue.increment(1),
+          },
         );
       },
       child: Column(
