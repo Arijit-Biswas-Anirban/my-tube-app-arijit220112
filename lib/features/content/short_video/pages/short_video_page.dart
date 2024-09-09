@@ -12,26 +12,28 @@ class ShortVideoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance.collection("shorts").snapshots(),
-            builder: (context, snapshot) {
-              if(!snapshot.hasData || snapshot.data == null){
-                return const ErrorPage();
-              }
-              if(snapshot.connectionState == ConnectionState.waiting){
-                return const Loader();
-              }
-
-              return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) {
-                final shortVideoMaps = snapshot.data!.docs;
-                ShortVideoModel shortVideo = ShortVideoModel.fromMap(shortVideoMaps[index].data());
-                return ShortVideoTile(shortVideo: shortVideo);
-              },);
-            },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance.collection("shorts").snapshots(),
+              builder: (context, snapshot) {
+                if(!snapshot.hasData || snapshot.data == null){
+                  return const ErrorPage();
+                }
+                if(snapshot.connectionState == ConnectionState.waiting){
+                  return const Loader();
+                }
+          
+                return ListView.builder(
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                  final shortVideoMaps = snapshot.data!.docs;
+                  ShortVideoModel shortVideo = ShortVideoModel.fromMap(shortVideoMaps[index].data());
+                  return ShortVideoTile(shortVideo: shortVideo);
+                },);
+              },
+            ),
           ),
         ),
       ),

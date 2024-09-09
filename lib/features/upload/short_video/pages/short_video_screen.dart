@@ -76,7 +76,7 @@ class _ShortVideoScreenState extends State<ShortVideoScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(top: 20.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: editorController!.initialized
               ? Column(
                   children: [
@@ -101,12 +101,12 @@ class _ShortVideoScreenState extends State<ShortVideoScreen> {
                     const Spacer(),
                     MyTrimSlider(
                       controller: editorController!,
-                      height: 45,
+                      height: 40,
                     ),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 12.0),
+                        padding: const EdgeInsets.only(bottom: 6.0),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.grey.shade300,
